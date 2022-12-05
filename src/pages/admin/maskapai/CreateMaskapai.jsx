@@ -4,8 +4,7 @@ import Logo from "../../../assets/admin-img/undraw_aircraft_re_m05i.svg";
 import { useNavigate } from "react-router-dom";
 import "../../../assets/css/styleAdmin.css";
 import { useState } from "react";
-import { createListAirline } from "../../../redux/actions/airlineActions";
-
+import { createNewAirline } from "../../../redux/actions/airlineActions";
 import Swal from "sweetalert2";
 
 function CreateMaskapai() {
@@ -13,38 +12,26 @@ function CreateMaskapai() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState([]);
+  const [errors, setErrors] = useState([]);
 
   // handle create
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (name === "") {
-      alert("Nama Maskapai Harap DI isi");
-      return;
-    }
-    if (phone === "") {
-      alert("ada yang salah");
-      return;
-    }
-    if (name !== "" && phone !== "") {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("phone", phone);
-      setError([]);
-      setIsLoading();
 
-      const createAirlineStatus = await createListAirline(formData, setError);
-
-      if (createAirlineStatus) {
-        Swal.fire({
-          title: "Success",
-          text: "Add Maskapai Success",
-          icon: "success",
-        });
-        return navigate("/maskapai");
-      }
-      setIsLoading(false);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("phone", phone);
+    setErrors([]);
+    setIsLoading(true);
+    const createStatus = await createNewAirline(formData, setErrors);
+    if (createStatus) {
+      Swal.fire({
+        title: "Success",
+        text: "add airline success",
+        icon: "success",
+      });
     }
+    setIsLoading(false);
   };
 
   return (
@@ -185,7 +172,7 @@ function CreateMaskapai() {
                         placeholder="+62877-0987"
                         onChange={(e) => setPhone(e.target.value)}
                       />
-                      <h6 className="err">{error}</h6>
+                      <h6 className="err">{errors}</h6>
                       <br />
                     </div>
                     <div className="text-end">
